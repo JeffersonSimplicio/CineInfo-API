@@ -29,4 +29,9 @@ public class MovieController : ControllerBase {
             return BadRequest(errors);
         }
     }
+
+    [HttpGet]
+    public OkObjectResult GetMoviesPagination([FromQuery] int skip = 0, int take = 50) {
+        return Ok(movies.Skip(skip).Take(take));
+    }
 }
