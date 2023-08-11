@@ -34,4 +34,12 @@ public class MovieController : ControllerBase {
     public OkObjectResult GetMoviesPagination([FromQuery] int skip = 0, int take = 50) {
         return Ok(movies.Skip(skip).Take(take));
     }
+
+    [HttpGet("{id}")]
+    public ActionResult GetMovieById(int id) {
+        Movie? movie = movies.FirstOrDefault(movie => movie.Id == id);
+        if (movie != null)
+            return Ok(movie);
+        return NotFound($"O filme com ID: {id}, não foi encontrado.");
+    }
 }
