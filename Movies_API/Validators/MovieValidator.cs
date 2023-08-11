@@ -16,8 +16,8 @@ public class MovieValidator : AbstractValidator<Movie> {
             .NotEmpty().WithMessage("A duração do filme é obrigatório.")
             .InclusiveBetween(70, 600).WithMessage("A duração do filme deve estar entre 70 e 600 minutos.");
 
-        RuleFor(movie => movie.Genre)
-            .NotEmpty().WithMessage("Pelo menos um gênero deve ser especificado.")
-            .Must(genres => genres.All(g => g.Length >= 3 && g.Length <= 50)).WithMessage("Cada gênero deve ter entre 3 e 50 caracteres.");
+        //RuleFor(movie => movie.Genre)
+        //    .NotEmpty().WithMessage("Pelo menos um gênero deve ser especificado.")
+        //    .Must(genres => genres.All(g => g.Length >= 3 && g.Length <= 50)).WithMessage("Cada gênero deve ter entre 3 e 50 caracteres.");
     }
 }
