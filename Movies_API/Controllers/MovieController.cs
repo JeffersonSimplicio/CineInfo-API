@@ -50,4 +50,13 @@ public class MovieController : ControllerBase {
             return Ok(movie);
         return NotFound($"O filme com ID: {id}, não foi encontrado.");
     }
+
+    [HttpPut("{id}")]
+    public ActionResult UpdateMovie(int id, [FromBody] UpdateMovieDTO movieDTO) {
+        Movie? movie = _context.Movies.FirstOrDefault(movie => movie.Id == id);
+        if(movie == null) return NotFound($"O filme com ID: {id}, não foi encontrado.");
+        _mapper.Map(movieDTO, movie);
+        _context.SaveChanges();
+        return NoContent();
+    }
 }
