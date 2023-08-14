@@ -3,7 +3,7 @@ using Movies_API.DTOs;
 
 namespace Movies_API.Validators;
 
-public class MovieValidator : AbstractValidator<CreateMovieDTO> {
+public class MovieValidator : AbstractValidator<MovieDTO> {
     public MovieValidator() {
         RuleFor(movie => movie.Title)
             .NotEmpty().WithMessage("O título do filme é obrigatório.")
