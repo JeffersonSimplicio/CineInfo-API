@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using Movies_API.Models;
+using Movies_API.DTOs;
 
 namespace Movies_API.Validators;
 
-public class MovieValidator : AbstractValidator<Movie> {
+public class MovieValidator : AbstractValidator<CreateMovieDTO> {
     public MovieValidator() {
         RuleFor(movie => movie.Title)
             .NotEmpty().WithMessage("O título do filme é obrigatório.")
