@@ -22,7 +22,7 @@ public class MovieController : ControllerBase {
 
     [HttpPost]
     public ActionResult AddMovie([FromBody] MovieDTO movieDTO) {
-        ValidationResult result = this.Validation(movieDTO);
+        ValidationResult result = Validation(movieDTO);
 
         if (result.IsValid) {
             Movie movie = _mapper.Map<Movie>(movieDTO);
@@ -44,17 +44,17 @@ public class MovieController : ControllerBase {
 
     [HttpGet("{id}")]
     public ActionResult GetMovieById(int id) {
-        Movie? movie = this.FindMovieById(id);
+        Movie? movie = FindMovieById(id);
         if (movie != null) return Ok(movie);
         return NotFound($"O filme com ID: {id}, não foi encontrado.");
     }
 
     [HttpPut("{id}")]
     public ActionResult UpdateMovie(int id, [FromBody] MovieDTO movieDTO) {
-        Movie? movie = this.FindMovieById(id);
+        Movie? movie = FindMovieById(id);
         if (movie == null) return NotFound($"O filme com ID: {id}, não foi encontrado.");
 
-        ValidationResult result = this.Validation(movieDTO);
+        ValidationResult result = Validation(movieDTO);
 
         if (result.IsValid) {
             _mapper.Map(movieDTO, movie);
@@ -70,14 +70,14 @@ public class MovieController : ControllerBase {
 
     [HttpPatch("{id}")]
     public ActionResult UpdatePatchMovie(int id, [FromBody] JsonPatchDocument<MovieDTO> patchMovie) {
-        Movie? movie = this.FindMovieById(id);
+        Movie? movie = FindMovieById(id);
         if (movie == null) return NotFound($"O filme com ID: {id}, não foi encontrado.");
 
         MovieDTO movieForUpdate = _mapper.Map<MovieDTO>(movie);
 
         patchMovie.ApplyTo(movieForUpdate);
 
-        ValidationResult result = this.Validation(movieForUpdate);
+        ValidationResult result = Validation(movieForUpdate);
 
         if (result.IsValid) {
             _mapper.Map(movieForUpdate, movie);
