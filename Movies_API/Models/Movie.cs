@@ -1,8 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Movies_API.Interfaces;
 
 namespace Movies_API.Models;
 
-public class Movie {
+public class Movie : IMovie {
     public int Id { get; set; }
     public string Title { get; set; }
     public int ReleaseYear { get; set; }

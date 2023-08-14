@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Movies_API.Data;
 using Movies_API.DTOs;
+using Movies_API.Interfaces;
 using Movies_API.Models;
 using Movies_API.Validators;
 
@@ -21,8 +22,8 @@ public class MovieController : ControllerBase {
     }
 
     [HttpPost]
-    public ActionResult AddMovie([FromBody] MovieDTO movieDTO) {
-        ValidationResult result = Validation(movieDTO);
+    public ActionResult AddMovie([FromBody] CreateMovieDTO movieDTO) {
+        ValidationResult result = _Validation(movieDTO);
 
         if (result.IsValid) {
             Movie movie = _mapper.Map<Movie>(movieDTO);
@@ -30,10 +31,8 @@ public class MovieController : ControllerBase {
             _context.SaveChanges();
             return CreatedAtAction(nameof(GetMovieById), new { id = movie.Id }, movie);
         }
-        List<string> errors = new List<string>();
-        foreach (var failure in result.Errors) {
-            errors.Add($"Property: {failure.PropertyName}, Error: {failure.ErrorMessage}");
-        }
+
+        List<string> errors = _ListErrors(result);
         return BadRequest(errors);
     }
 
@@ -44,40 +43,37 @@ public class MovieController : ControllerBase {
 
     [HttpGet("{id}")]
     public ActionResult GetMovieById(int id) {
-        Movie? movie = FindMovieById(id);
+        Movie? movie = _FindMovieById(id);
         if (movie != null) return Ok(movie);
         return NotFound($"O filme com ID: {id}, não foi encontrado.");
     }
 
     [HttpPut("{id}")]
-    public ActionResult UpdateMovie(int id, [FromBody] MovieDTO movieDTO) {
-        Movie? movie = FindMovieById(id);
+    public ActionResult UpdateMovie(int id, [FromBody] UpdateMovieDTO movieDTO) {
+        Movie? movie = _FindMovieById(id);
         if (movie == null) return NotFound($"O filme com ID: {id}, não foi encontrado.");
 
-        ValidationResult result = Validation(movieDTO);
+        ValidationResult result = _Validation(movieDTO);
 
         if (result.IsValid) {
             _mapper.Map(movieDTO, movie);
             _context.SaveChanges();
             return NoContent();
         }
-        List<string> errors = new List<string>();
-        foreach (var failure in result.Errors) {
-            errors.Add($"Property: {failure.PropertyName}, Error: {failure.ErrorMessage}");
-        }
+        List<string> errors = _ListErrors(result);
         return BadRequest(errors);
     }
 
     [HttpPatch("{id}")]
-    public ActionResult UpdatePatchMovie(int id, [FromBody] JsonPatchDocument<MovieDTO> patchMovie) {
-        Movie? movie = FindMovieById(id);
+    public ActionResult UpdatePatchMovie(int id, [FromBody] JsonPatchDocument<UpdateMovieDTO> patchMovie) {
+        Movie? movie = _FindMovieById(id);
         if (movie == null) return NotFound($"O filme com ID: {id}, não foi encontrado.");
 
-        MovieDTO movieForUpdate = _mapper.Map<MovieDTO>(movie);
+        UpdateMovieDTO movieForUpdate = _mapper.Map<UpdateMovieDTO>(movie);
 
         patchMovie.ApplyTo(movieForUpdate);
 
-        ValidationResult result = Validation(movieForUpdate);
+        ValidationResult result = _Validation(movieForUpdate);
 
         if (result.IsValid) {
             _mapper.Map(movieForUpdate, movie);
@@ -85,21 +81,37 @@ public class MovieController : ControllerBase {
             return NoContent();
         }
 
-        List<string> errors = new List<string>();
-        foreach (var failure in result.Errors) {
-            errors.Add($"Property: {failure.PropertyName}, Error: {failure.ErrorMessage}");
-        }
+        List<string> errors = _ListErrors(result);
         return BadRequest(errors);
     }
 
-    private Movie? FindMovieById(int id) {
+    [HttpDelete("{id}")]
+    public ActionResult Delete(int id) {
+        Movie? movie = _FindMovieById(id);
+
+        if (movie == null) return NotFound($"O filme com ID: {id}, não foi encontrado.");
+
+        _context.Movies.Remove(movie);
+        _context.SaveChanges();
+        return NoContent();
+    }
+
+    private Movie? _FindMovieById(int id) {
         Movie? movie = _context.Movies.FirstOrDefault(movie => movie.Id == id);
         return movie;
     }
 
-    private ValidationResult Validation(MovieDTO movieForValidation) {
+    private ValidationResult _Validation(IMovie movieForValidation) {
         var validator = new MovieValidator();
         ValidationResult result = validator.Validate(movieForValidation);
         return result;
+    }
+
+    private List<string> _ListErrors(ValidationResult result) {
+        List<string> errors = new List<string>();
+        foreach (var failure in result.Errors) {
+            errors.Add($"Property: {failure.PropertyName}, Error: {failure.ErrorMessage}");
+        }
+        return errors;
     }
 }
