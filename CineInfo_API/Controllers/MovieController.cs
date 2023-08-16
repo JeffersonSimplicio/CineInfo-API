@@ -24,7 +24,7 @@ public class MovieController : ControllerBase {
     /// <summary>
     /// Adiciona um filme ao banco de dados
     /// </summary>
-    /// <param name="CreateMovieDTO">Objeto com os campos necessários para criação de um filme</param>
+    /// <param name="movieDTO">Objeto com os campos necessários para criação de um filme</param>
     /// <returns>ActionResult</returns>
     /// <response code="201">Caso inserção seja feita com sucesso</response>
     /// <response code="400">Caso alguma imformação não esta dentro das regras</response>
