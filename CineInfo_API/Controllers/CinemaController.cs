@@ -102,6 +102,15 @@ public class CinemaController : Controller {
         return BadRequest(errors);
     }
 
+    /// <summary>
+    /// Atualiza parcialmente um cinema existente pelo ID
+    /// </summary>
+    /// <param name="id">Identificador(ID) do cinema que deseja atualizar parcialmente</param>
+    /// <param name="patchCine">JsonPatchDocument contendo as atualizações a serem aplicadas</param>
+    /// <returns>ActionResult</returns>
+    /// <response code="204">Caso a atualização parcial seja bem sucedida</response>
+    /// <response code="400">Caso ocorra um erro de validação nas atualizações</response>
+    /// <response code="404">Caso nenhum cinema seja encontrado com o ID informado</response>
     [HttpPatch("{id}")]
     public ActionResult UpdatePatchMovie(int id, [FromBody] JsonPatchDocument<UpdateCinemaDTO> patchCine) {
         Cinema? cine = _FindCinemaById(id);
