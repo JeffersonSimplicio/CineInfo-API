@@ -7,5 +7,6 @@ namespace CineInfo_API.Profiles;
 public class CinemaProfile : Profile {
     public CinemaProfile() {
         CreateMap<CreateCinemaDTO, Cinema>();
+        CreateMap<Cinema, ReadCinemaDTO>();
     }
 }

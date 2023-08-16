@@ -42,6 +42,16 @@ public class CinemaController : Controller {
         return BadRequest(errors);
     }
 
+    [HttpGet]
+    public ActionResult<List<ReadMovieDTO>> GetCinemaPagination([FromQuery] int skip = 0, int take = 50) {
+        IQueryable<Cinema> cines = _dbContext.Cinemas.Skip(skip).Take(take);
+
+        List<ReadMovieDTO> readMovieDTOs = cines.AsEnumerable()
+            .Select(movie => _mapper.Map<ReadMovieDTO>(movie))
+            .ToList();
+        return Ok(readMovieDTOs);
+    }
+
     private ValidationResult _Validation(ICinema cineForValidation) {
         var validator = new CinemaValidator();
         ValidationResult result = validator.Validate(cineForValidation);
