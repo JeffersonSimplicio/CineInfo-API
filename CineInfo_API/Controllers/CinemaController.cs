@@ -20,6 +20,13 @@ public class CinemaController : Controller {
         _mapper = mapper;
     }
 
+    /// <summary>
+    /// Adiciona um novo cinema
+    /// </summary>
+    /// <param name="cinemaDTO">Objeto com os campos necessários para criação de um cinema</param>
+    /// <returns>ActionResult</returns>
+    /// <response code="201">Caso a criação seja bem sucedida</response>
+    /// <response code="400">Caso ocorra um erro de validação nos campos</response>
     [HttpPost]
     public ActionResult AddCinema([FromBody] CreateCinemaDTO cinemaDTO) {
         var result = _Validation(cinemaDTO);
