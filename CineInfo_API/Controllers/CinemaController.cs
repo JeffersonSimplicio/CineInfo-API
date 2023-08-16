@@ -42,6 +42,13 @@ public class CinemaController : Controller {
         return BadRequest(errors);
     }
 
+    /// <summary>
+    /// Obtém uma lista paginada de cinemas
+    /// </summary>
+    /// <param name="skip">Número de itens a serem ignorados (padrão: 0)</param>
+    /// <param name="take">Número máximo de itens a serem retornados (padrão: 50)</param>
+    /// <returns>ActionResult{List{ReadMovieDTO}}</returns>
+    /// <response code="200">Caso a requisição seja bem sucedida</response>
     [HttpGet]
     public ActionResult<List<ReadMovieDTO>> GetCinemaPagination([FromQuery] int skip = 0, int take = 50) {
         IQueryable<Cinema> cines = _dbContext.Cinemas.Skip(skip).Take(take);
