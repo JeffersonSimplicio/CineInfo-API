@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿ using AutoMapper;
 using CineInfo_API.Data;
 using CineInfo_API.Data.DTOs;
 using CineInfo_API.Interfaces;
@@ -73,6 +73,23 @@ public class CinemaController : Controller {
         }
         ReadCinemaDTO cineDTO = _mapper.Map<ReadCinemaDTO>(cine);
         return Ok(cineDTO);
+    }
+
+    [HttpPut("{id}")]
+    public ActionResult UpdateCinema(int id, [FromBody] UpdateCinemaDTO cineDTO) {
+        Cinema? cine = _FindCinemaById(id);
+        if (cine == null)
+            return NotFound($"O cinema com ID: {id}, não foi encontrado.");
+
+        ValidationResult result = _Validation(cineDTO);
+
+        if (result.IsValid) {
+            _mapper.Map(cineDTO, cine);
+            _dbContext.SaveChanges();
+            return NoContent();
+        }
+        List<string> errors = _ListErrors(result);
+        return BadRequest(errors);
     }
 
     private Cinema? _FindCinemaById(int id) {
