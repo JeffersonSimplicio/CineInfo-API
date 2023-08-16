@@ -5,6 +5,7 @@ using CineInfo_API.Interfaces;
 using CineInfo_API.Models;
 using CineInfo_API.Validators;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CineInfo_API.Controllers;
@@ -97,6 +98,27 @@ public class CinemaController : Controller {
             _dbContext.SaveChanges();
             return NoContent();
         }
+        List<string> errors = _ListErrors(result);
+        return BadRequest(errors);
+    }
+
+    [HttpPatch("{id}")]
+    public ActionResult UpdatePatchMovie(int id, [FromBody] JsonPatchDocument<UpdateCinemaDTO> patchCine) {
+        Cinema? cine = _FindCinemaById(id);
+        if (cine == null) return NotFound($"O filme com ID: {id}, não foi encontrado.");
+
+        UpdateCinemaDTO cineForUpdate = _mapper.Map<UpdateCinemaDTO>(cine);
+
+        patchCine.ApplyTo(cineForUpdate);
+
+        ValidationResult result = _Validation(cineForUpdate);
+
+        if (result.IsValid) {
+            _mapper.Map(cineForUpdate, cine);
+            _dbContext.SaveChanges();
+            return NoContent();
+        }
+
         List<string> errors = _ListErrors(result);
         return BadRequest(errors);
     }
