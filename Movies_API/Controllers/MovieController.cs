@@ -37,15 +37,24 @@ public class MovieController : ControllerBase {
     }
 
     [HttpGet]
-    public ActionResult<IQueryable<Movie>> GetMoviesPagination([FromQuery] int skip = 0, int take = 50) {
-        return Ok(_context.Movies.Skip(skip).Take(take));
+    public ActionResult<List<ReadMovieDTO>> GetMoviesPagination([FromQuery] int skip = 0, int take = 50) {
+        IQueryable<Movie> movies = _context.Movies.Skip(skip).Take(take);
+
+        List<ReadMovieDTO> readMovieDTOs = movies.AsEnumerable()
+            .Select(movie => _mapper.Map<ReadMovieDTO>(movie))
+            .ToList();
+        return Ok(readMovieDTOs);
     }
 
     [HttpGet("{id}")]
     public ActionResult GetMovieById(int id) {
         Movie? movie = _FindMovieById(id);
-        if (movie != null) return Ok(movie);
-        return NotFound($"O filme com ID: {id}, não foi encontrado.");
+        if (movie == null) {
+            return NotFound($"O filme com ID: {id}, não foi encontrado.");
+        }
+
+        ReadMovieDTO movieDTO = _mapper.Map<ReadMovieDTO>(movie);
+        return Ok(movieDTO);
     }
 
     [HttpPut("{id}")]

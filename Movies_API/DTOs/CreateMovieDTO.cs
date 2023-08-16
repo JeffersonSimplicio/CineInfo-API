@@ -1,5 +1,4 @@
 ﻿using Movies_API.Interfaces;
-using System.ComponentModel.DataAnnotations;
 
 namespace Movies_API.DTOs; 
 public class CreateMovieDTO: IMovie {

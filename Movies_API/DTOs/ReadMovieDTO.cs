@@ -6,4 +6,5 @@ public class ReadMovieDTO: IMovie {
     public string Title { get; set; }
     public int ReleaseYear { get; set; }
     public int Duration { get; set; }
+    public string SearchTimestamp { get; set; } = DateTime.Now.ToString("HH:mm:ss dd/MM/yyyy");
 }
