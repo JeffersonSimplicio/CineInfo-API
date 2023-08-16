@@ -132,6 +132,13 @@ public class CinemaController : Controller {
         return BadRequest(errors);
     }
 
+    /// <summary>
+    /// Exclui um cinema pelo ID
+    /// </summary>
+    /// <param name="id">Identificador(ID) do cinema que deseja excluir</param>
+    /// <returns>ActionResult</returns>
+    /// <response code="204">Caso a exclusão seja bem sucedida</response>
+    /// <response code="404">Caso nenhum cinema seja encontrado com o ID informado</response>
     [HttpDelete("{id}")]
     public ActionResult DeleteCinema(int id) {
         Cinema? cine = _FindCinemaById(id);
