@@ -75,6 +75,15 @@ public class CinemaController : Controller {
         return Ok(cineDTO);
     }
 
+    /// <summary>
+    /// Atualiza um cinema pelo ID
+    /// </summary>
+    /// <param name="id">Identificador(ID) do cinema que deseja atualizar</param>
+    /// <param name="cineDTO">Objeto com os campos a serem atualizados do cinema</param>
+    /// <returns>ActionResult</returns>
+    /// <response code="204">Caso a atualização seja bem sucedida</response>
+    /// <response code="400">Caso ocorra um erro de validação nos campos</response>
+    /// <response code="404">Caso nenhum cinema seja encontrado com o ID informado</response>
     [HttpPut("{id}")]
     public ActionResult UpdateCinema(int id, [FromBody] UpdateCinemaDTO cineDTO) {
         Cinema? cine = _FindCinemaById(id);
