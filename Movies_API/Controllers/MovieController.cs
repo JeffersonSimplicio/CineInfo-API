@@ -37,7 +37,7 @@ public class MovieController : ControllerBase {
     }
 
     [HttpGet]
-    public OkObjectResult GetMoviesPagination([FromQuery] int skip = 0, int take = 50) {
+    public ActionResult<IQueryable<Movie>> GetMoviesPagination([FromQuery] int skip = 0, int take = 50) {
         return Ok(_context.Movies.Skip(skip).Take(take));
     }
 
@@ -86,7 +86,7 @@ public class MovieController : ControllerBase {
     }
 
     [HttpDelete("{id}")]
-    public ActionResult Delete(int id) {
+    public ActionResult DeleteMovie(int id) {
         Movie? movie = _FindMovieById(id);
 
         if (movie == null) return NotFound($"O filme com ID: {id}, não foi encontrado.");
