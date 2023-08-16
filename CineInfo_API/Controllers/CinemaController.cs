@@ -58,6 +58,13 @@ public class CinemaController : Controller {
         return Ok(readMovieDTOs);
     }
 
+    /// <summary>
+    /// Obtém um cinema pelo ID
+    /// </summary>
+    /// <param name="id">Identificador(ID) do cinema que deseja obter</param>
+    /// <returns>ActionResult</returns>
+    /// <response code="200">Caso a requisição seja bem sucedida</response>
+    /// <response code="404">Caso nenhum cinema seja encontrado com o ID informado</response>
     [HttpGet("{id}")]
     public ActionResult GetCinemaById(int id) {
         Cinema? cine = _FindCinemaById(id);
