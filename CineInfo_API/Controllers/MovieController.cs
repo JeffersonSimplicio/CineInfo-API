@@ -21,6 +21,13 @@ public class MovieController : ControllerBase {
         _mapper = mapper;
     }
 
+    /// <summary>
+    /// Adiciona um filme ao banco de dados
+    /// </summary>
+    /// <param name="CreateMovieDTO">Objeto com os campos necessários para criação de um filme</param>
+    /// <returns>ActionResult</returns>
+    /// <response code="201">Caso inserção seja feita com sucesso</response>
+    /// <response code="400">Caso alguma imformação não esta dentro das regras</response>
     [HttpPost]
     public ActionResult AddMovie([FromBody] CreateMovieDTO movieDTO) {
         ValidationResult result = _Validation(movieDTO);
@@ -36,6 +43,13 @@ public class MovieController : ControllerBase {
         return BadRequest(errors);
     }
 
+    /// <summary>
+    /// Retona filmes de forma paginada
+    /// </summary>
+    /// <param name="skip">Quantos filmes devem ser pulados</param>
+    /// <param name="take">Quantos filmes devem ser retornados</param>
+    /// <returns>ActionResult{List{ReadMovieDTO}}</returns>
+    /// <response code="200">Caso a consulta tenha sido bem sucedida</response>
     [HttpGet]
     public ActionResult<List<ReadMovieDTO>> GetMoviesPagination([FromQuery] int skip = 0, int take = 50) {
         IQueryable<Movie> movies = _dbContext.Movies.Skip(skip).Take(take);
@@ -46,6 +60,13 @@ public class MovieController : ControllerBase {
         return Ok(readMovieDTOs);
     }
 
+    /// <summary>
+    /// Retona o filme com o ID informando
+    /// </summary>
+    /// <param name="id">Identificador(id) do filme que deseja buscar</param>
+    /// <returns>ActionResult{List{ReadMovieDTO}}</returns>
+    /// <response code="200">Caso a busca seja bem sucedida</response>
+    /// <response code="404">Caso nenhum filme seja encontrado com o ID informado</response>
     [HttpGet("{id}")]
     public ActionResult GetMovieById(int id) {
         Movie? movie = _FindMovieById(id);
@@ -57,6 +78,14 @@ public class MovieController : ControllerBase {
         return Ok(movieDTO);
     }
 
+    /// <summary>
+    /// Atualiza um filme existente pelo ID
+    /// </summary>
+    /// <param name="id">Identificador(ID) do filme que deseja atualizar</param>
+    /// <param name="movieDTO">Objeto com os campos a serem atualizados do filme</param>
+    /// <returns><see cref="ActionResult"/></returns>
+    /// <response code="204">Caso a atualização seja bem sucedida</response>
+    /// <response code="404">Caso nenhum filme seja encontrado com o ID informado</response>
     [HttpPut("{id}")]
     public ActionResult UpdateMovie(int id, [FromBody] UpdateMovieDTO movieDTO) {
         Movie? movie = _FindMovieById(id);
@@ -73,6 +102,15 @@ public class MovieController : ControllerBase {
         return BadRequest(errors);
     }
 
+    /// <summary>
+    /// Atualiza parcialmente um filme existente pelo ID
+    /// </summary>
+    /// <param name="id">Identificador(ID) do filme que deseja atualizar parcialmente</param>
+    /// <param name="patchMovie">JsonPatchDocument contendo as atualizações a serem aplicadas</param>
+    /// <returns>ActionResult</returns>
+    /// <response code="204">Caso a atualização parcial seja bem sucedida</response>
+    /// <response code="400">Caso ocorra um erro de validação nas atualizações</response>
+    /// <response code="404">Caso nenhum filme seja encontrado com o ID informado</response>
     [HttpPatch("{id}")]
     public ActionResult UpdatePatchMovie(int id, [FromBody] JsonPatchDocument<UpdateMovieDTO> patchMovie) {
         Movie? movie = _FindMovieById(id);
@@ -94,6 +132,13 @@ public class MovieController : ControllerBase {
         return BadRequest(errors);
     }
 
+    /// <summary>
+    /// Exclui um filme pelo ID
+    /// </summary>
+    /// <param name="id">Identificador(ID) do filme que deseja excluir</param>
+    /// <returns>ActionResult</returns>
+    /// <response code="204">Caso a exclusão seja bem sucedida</response>
+    /// <response code="404">Caso nenhum filme seja encontrado com o ID informado</response>
     [HttpDelete("{id}")]
     public ActionResult DeleteMovie(int id) {
         Movie? movie = _FindMovieById(id);
