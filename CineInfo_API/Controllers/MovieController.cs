@@ -1,23 +1,23 @@
 ﻿using AutoMapper;
-using FluentValidation.Results;
-using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.Mvc;
 using CineInfo_API.Data;
 using CineInfo_API.Data.DTOs;
 using CineInfo_API.Interfaces;
 using CineInfo_API.Models;
 using CineInfo_API.Validators;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CineInfo_API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
 public class MovieController : ControllerBase {
-    private MovieContext _context;
+    private CineInfoContext _dbContext;
     private IMapper _mapper;
 
-    public MovieController(MovieContext context, IMapper mapper) {
-        _context = context;
+    public MovieController(CineInfoContext dbContext, IMapper mapper) {
+        _dbContext = dbContext;
         _mapper = mapper;
     }
 
@@ -27,8 +27,8 @@ public class MovieController : ControllerBase {
 
         if (result.IsValid) {
             Movie movie = _mapper.Map<Movie>(movieDTO);
-            _context.Movies.Add(movie);
-            _context.SaveChanges();
+            _dbContext.Movies.Add(movie);
+            _dbContext.SaveChanges();
             return CreatedAtAction(nameof(GetMovieById), new { id = movie.Id }, movie);
         }
 
@@ -38,7 +38,7 @@ public class MovieController : ControllerBase {
 
     [HttpGet]
     public ActionResult<List<ReadMovieDTO>> GetMoviesPagination([FromQuery] int skip = 0, int take = 50) {
-        IQueryable<Movie> movies = _context.Movies.Skip(skip).Take(take);
+        IQueryable<Movie> movies = _dbContext.Movies.Skip(skip).Take(take);
 
         List<ReadMovieDTO> readMovieDTOs = movies.AsEnumerable()
             .Select(movie => _mapper.Map<ReadMovieDTO>(movie))
@@ -66,7 +66,7 @@ public class MovieController : ControllerBase {
 
         if (result.IsValid) {
             _mapper.Map(movieDTO, movie);
-            _context.SaveChanges();
+            _dbContext.SaveChanges();
             return NoContent();
         }
         List<string> errors = _ListErrors(result);
@@ -86,7 +86,7 @@ public class MovieController : ControllerBase {
 
         if (result.IsValid) {
             _mapper.Map(movieForUpdate, movie);
-            _context.SaveChanges();
+            _dbContext.SaveChanges();
             return NoContent();
         }
 
@@ -100,13 +100,13 @@ public class MovieController : ControllerBase {
 
         if (movie == null) return NotFound($"O filme com ID: {id}, não foi encontrado.");
 
-        _context.Movies.Remove(movie);
-        _context.SaveChanges();
+        _dbContext.Movies.Remove(movie);
+        _dbContext.SaveChanges();
         return NoContent();
     }
 
     private Movie? _FindMovieById(int id) {
-        Movie? movie = _context.Movies.FirstOrDefault(movie => movie.Id == id);
+        Movie? movie = _dbContext.Movies.FirstOrDefault(movie => movie.Id == id);
         return movie;
     }
 
