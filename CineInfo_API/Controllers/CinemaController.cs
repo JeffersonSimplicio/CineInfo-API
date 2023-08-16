@@ -112,7 +112,7 @@ public class CinemaController : Controller {
     /// <response code="400">Caso ocorra um erro de validação nas atualizações</response>
     /// <response code="404">Caso nenhum cinema seja encontrado com o ID informado</response>
     [HttpPatch("{id}")]
-    public ActionResult UpdatePatchMovie(int id, [FromBody] JsonPatchDocument<UpdateCinemaDTO> patchCine) {
+    public ActionResult UpdatePatchCinema(int id, [FromBody] JsonPatchDocument<UpdateCinemaDTO> patchCine) {
         Cinema? cine = _FindCinemaById(id);
         if (cine == null) return NotFound($"O filme com ID: {id}, não foi encontrado.");
 
