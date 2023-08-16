@@ -132,6 +132,17 @@ public class CinemaController : Controller {
         return BadRequest(errors);
     }
 
+    [HttpDelete("{id}")]
+    public ActionResult DeleteCinema(int id) {
+        Cinema? cine = _FindCinemaById(id);
+
+        if (cine == null) return NotFound($"O cinema com ID: {id}, não foi encontrado.");
+
+        _dbContext.Cinemas.Remove(cine);
+        _dbContext.SaveChanges();
+        return NoContent();
+    }
+
     private Cinema? _FindCinemaById(int id) {
         Cinema? cinema = _dbContext.Cinemas.FirstOrDefault(cine => cine.Id == id);
         return cinema;
