@@ -35,8 +35,7 @@ public class CinemaController : Controller {
             Cinema cine = _mapper.Map<Cinema>(cinemaDTO);
             _dbContext.Cinemas.Add(cine);
             _dbContext.SaveChanges();
-            //return CreatedAtAction(nameof(GetCineById), new { id = cine.Id }, cine);
-            return Created($"localhost/cinema/{cine.Id}", cine);
+            return CreatedAtAction(nameof(GetCinemaById), new { id = cine.Id }, cine);
         }
         List<string> errors = _ListErrors(result);
         return BadRequest(errors);
@@ -57,6 +56,21 @@ public class CinemaController : Controller {
             .Select(movie => _mapper.Map<ReadMovieDTO>(movie))
             .ToList();
         return Ok(readMovieDTOs);
+    }
+
+    [HttpGet("{id}")]
+    public ActionResult GetCinemaById(int id) {
+        Cinema? cine = _FindCinemaById(id);
+        if (cine == null) {
+            return NotFound($"O cinema com ID: {id}, não foi encontrado.");
+        }
+        ReadCinemaDTO cineDTO = _mapper.Map<ReadCinemaDTO>(cine);
+        return Ok(cineDTO);
+    }
+
+    private Cinema? _FindCinemaById(int id) {
+        Cinema? cinema = _dbContext.Cinemas.FirstOrDefault(cine => cine.Id == id);
+        return cinema;
     }
 
     private ValidationResult _Validation(ICinema cineForValidation) {
