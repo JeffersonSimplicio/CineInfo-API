@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Movies_API.DTOs;
-using Movies_API.Interfaces;
-using Movies_API.Models;
+using CineInfo_API.Data.DTOs;
+using CineInfo_API.Interfaces;
+using CineInfo_API.Models;
 
-namespace Movies_API.Profiles;
+namespace CineInfo_API.Profiles;
 
 public class MovieProfile : Profile {
     public MovieProfile() {

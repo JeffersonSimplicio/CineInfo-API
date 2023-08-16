@@ -2,13 +2,13 @@
 using FluentValidation.Results;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Movies_API.Data;
-using Movies_API.DTOs;
-using Movies_API.Interfaces;
-using Movies_API.Models;
-using Movies_API.Validators;
+using CineInfo_API.Data;
+using CineInfo_API.Data.DTOs;
+using CineInfo_API.Interfaces;
+using CineInfo_API.Models;
+using CineInfo_API.Validators;
 
-namespace Movies_API.Controllers;
+namespace CineInfo_API.Controllers;
 
 [ApiController]
 [Route("[controller]")]

@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "Movies_API": {
+    "CineInfo_API": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false,

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
-using Movies_API.Data;
+using CineInfo_API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

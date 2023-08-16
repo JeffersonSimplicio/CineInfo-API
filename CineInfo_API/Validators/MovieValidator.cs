@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using Movies_API.Interfaces;
+using CineInfo_API.Interfaces;
 
-namespace Movies_API.Validators;
+namespace CineInfo_API.Validators;
 
 public class MovieValidator : AbstractValidator<IMovie> {
     public MovieValidator() {
