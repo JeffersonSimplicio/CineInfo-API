@@ -4,9 +4,9 @@ using CineInfo_API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("MovieConnection");
+var connectionString = builder.Configuration.GetConnectionString("CineInfoConnection");
 
-builder.Services.AddDbContext<MovieContext>(opts =>
+builder.Services.AddDbContext<CineInfoContext>(opts =>
     opts.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
