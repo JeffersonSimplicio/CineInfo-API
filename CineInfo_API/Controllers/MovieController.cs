@@ -17,11 +17,13 @@ public class MovieController : ControllerBase {
     private CineInfoContext _dbContext;
     private IMapper _mapper;
     private FindById<Movie> _FindMovieById;
+    private ListErrors _ListErrors;
 
     public MovieController(CineInfoContext dbContext, IMapper mapper) {
         _dbContext = dbContext;
         _mapper = mapper;
         _FindMovieById = new FindById<Movie>(_dbContext);
+        _ListErrors = new ListErrors();
     }
 
     /// <summary>
@@ -42,7 +44,7 @@ public class MovieController : ControllerBase {
             return CreatedAtAction(nameof(GetMovieById), new { id = movie.Id }, movie);
         }
 
-        List<string> errors = _ListErrors(result);
+        List<string> errors = _ListErrors.Generate(result);
         return BadRequest(errors);
     }
 
@@ -101,7 +103,7 @@ public class MovieController : ControllerBase {
             _dbContext.SaveChanges();
             return NoContent();
         }
-        List<string> errors = _ListErrors(result);
+        List<string> errors = _ListErrors.Generate(result);
         return BadRequest(errors);
     }
 
@@ -131,7 +133,7 @@ public class MovieController : ControllerBase {
             return NoContent();
         }
 
-        List<string> errors = _ListErrors(result);
+        List<string> errors = _ListErrors.Generate(result);
         return BadRequest(errors);
     }
 
@@ -157,13 +159,5 @@ public class MovieController : ControllerBase {
         var validator = new MovieValidator();
         ValidationResult result = validator.Validate(movieForValidation);
         return result;
-    }
-
-    private List<string> _ListErrors(ValidationResult result) {
-        List<string> errors = new List<string>();
-        foreach (var failure in result.Errors) {
-            errors.Add($"Property: {failure.PropertyName}, Error: {failure.ErrorMessage}");
-        }
-        return errors;
     }
 }

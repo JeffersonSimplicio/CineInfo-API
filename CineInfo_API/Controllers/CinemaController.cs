@@ -17,11 +17,13 @@ public class CinemaController : Controller {
     private CineInfoContext _dbContext;
     private IMapper _mapper;
     private FindById<Cinema> _FindCinemaById;
+    private ListErrors _ListErrors;
 
     public CinemaController(CineInfoContext dbContext, IMapper mapper) {
         _dbContext = dbContext;
         _mapper = mapper;
         _FindCinemaById = new FindById<Cinema>(_dbContext);
+        _ListErrors = new ListErrors();
     }
 
     /// <summary>
@@ -41,7 +43,7 @@ public class CinemaController : Controller {
             _dbContext.SaveChanges();
             return CreatedAtAction(nameof(GetCinemaById), new { id = cine.Id }, cine);
         }
-        List<string> errors = _ListErrors(result);
+        List<string> errors = _ListErrors.Generate(result);
         return BadRequest(errors);
     }
 
@@ -101,7 +103,7 @@ public class CinemaController : Controller {
             _dbContext.SaveChanges();
             return NoContent();
         }
-        List<string> errors = _ListErrors(result);
+        List<string> errors = _ListErrors.Generate(result);
         return BadRequest(errors);
     }
 
@@ -131,7 +133,7 @@ public class CinemaController : Controller {
             return NoContent();
         }
 
-        List<string> errors = _ListErrors(result);
+        List<string> errors = _ListErrors.Generate(result);
         return BadRequest(errors);
     }
 
@@ -157,13 +159,5 @@ public class CinemaController : Controller {
         var validator = new CinemaValidator();
         ValidationResult result = validator.Validate(cineForValidation);
         return result;
-    }
-
-    private List<string> _ListErrors(ValidationResult result) {
-        List<string> errors = new List<string>();
-        foreach (var failure in result.Errors) {
-            errors.Add($"Property: {failure.PropertyName}, Error: {failure.ErrorMessage}");
-        }
-        return errors;
     }
 }
