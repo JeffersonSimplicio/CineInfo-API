@@ -3,6 +3,7 @@ using CineInfo_API.Data;
 using CineInfo_API.Data.DTOs;
 using CineInfo_API.Interfaces;
 using CineInfo_API.Models;
+using CineInfo_API.Utilities;
 using CineInfo_API.Validators;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.JsonPatch;
@@ -15,10 +16,12 @@ namespace CineInfo_API.Controllers;
 public class MovieController : ControllerBase {
     private CineInfoContext _dbContext;
     private IMapper _mapper;
+    private FindById<Movie> _FindMovieById;
 
     public MovieController(CineInfoContext dbContext, IMapper mapper) {
         _dbContext = dbContext;
         _mapper = mapper;
+        _FindMovieById = new FindById<Movie>(_dbContext);
     }
 
     /// <summary>
@@ -69,7 +72,7 @@ public class MovieController : ControllerBase {
     /// <response code="404">Caso nenhum filme seja encontrado com o ID informado</response>
     [HttpGet("{id}")]
     public ActionResult GetMovieById(int id) {
-        Movie? movie = _FindMovieById(id);
+        Movie? movie = _FindMovieById.Find(id);
         if (movie == null) {
             return NotFound($"O filme com ID: {id}, não foi encontrado.");
         }
@@ -88,7 +91,7 @@ public class MovieController : ControllerBase {
     /// <response code="404">Caso nenhum filme seja encontrado com o ID informado</response>
     [HttpPut("{id}")]
     public ActionResult UpdateMovie(int id, [FromBody] UpdateMovieDTO movieDTO) {
-        Movie? movie = _FindMovieById(id);
+        Movie? movie = _FindMovieById.Find(id);
         if (movie == null) return NotFound($"O filme com ID: {id}, não foi encontrado.");
 
         ValidationResult result = _Validation(movieDTO);
@@ -113,7 +116,7 @@ public class MovieController : ControllerBase {
     /// <response code="404">Caso nenhum filme seja encontrado com o ID informado</response>
     [HttpPatch("{id}")]
     public ActionResult UpdatePatchMovie(int id, [FromBody] JsonPatchDocument<UpdateMovieDTO> patchMovie) {
-        Movie? movie = _FindMovieById(id);
+        Movie? movie = _FindMovieById.Find(id);
         if (movie == null) return NotFound($"O filme com ID: {id}, não foi encontrado.");
 
         UpdateMovieDTO movieForUpdate = _mapper.Map<UpdateMovieDTO>(movie);
@@ -141,18 +144,13 @@ public class MovieController : ControllerBase {
     /// <response code="404">Caso nenhum filme seja encontrado com o ID informado</response>
     [HttpDelete("{id}")]
     public ActionResult DeleteMovie(int id) {
-        Movie? movie = _FindMovieById(id);
+        Movie? movie = _FindMovieById.Find(id);
 
         if (movie == null) return NotFound($"O filme com ID: {id}, não foi encontrado.");
 
         _dbContext.Movies.Remove(movie);
         _dbContext.SaveChanges();
         return NoContent();
-    }
-
-    private Movie? _FindMovieById(int id) {
-        Movie? movie = _dbContext.Movies.FirstOrDefault(movie => movie.Id == id);
-        return movie;
     }
 
     private ValidationResult _Validation(IMovie movieForValidation) {

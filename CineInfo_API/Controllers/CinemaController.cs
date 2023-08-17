@@ -3,6 +3,7 @@ using CineInfo_API.Data;
 using CineInfo_API.Data.DTOs;
 using CineInfo_API.Interfaces;
 using CineInfo_API.Models;
+using CineInfo_API.Utilities;
 using CineInfo_API.Validators;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.JsonPatch;
@@ -15,10 +16,12 @@ namespace CineInfo_API.Controllers;
 public class CinemaController : Controller {
     private CineInfoContext _dbContext;
     private IMapper _mapper;
+    private FindById<Cinema> _FindCinemaById;
 
     public CinemaController(CineInfoContext dbContext, IMapper mapper) {
         _dbContext = dbContext;
         _mapper = mapper;
+        _FindCinemaById = new FindById<Cinema>(_dbContext);
     }
 
     /// <summary>
@@ -68,7 +71,7 @@ public class CinemaController : Controller {
     /// <response code="404">Caso nenhum cinema seja encontrado com o ID informado</response>
     [HttpGet("{id}")]
     public ActionResult GetCinemaById(int id) {
-        Cinema? cine = _FindCinemaById(id);
+        Cinema? cine = _FindCinemaById.Find(id);
         if (cine == null) {
             return NotFound($"O cinema com ID: {id}, não foi encontrado.");
         }
@@ -87,7 +90,7 @@ public class CinemaController : Controller {
     /// <response code="404">Caso nenhum cinema seja encontrado com o ID informado</response>
     [HttpPut("{id}")]
     public ActionResult UpdateCinema(int id, [FromBody] UpdateCinemaDTO cineDTO) {
-        Cinema? cine = _FindCinemaById(id);
+        Cinema? cine = _FindCinemaById.Find(id);
         if (cine == null)
             return NotFound($"O cinema com ID: {id}, não foi encontrado.");
 
@@ -113,7 +116,7 @@ public class CinemaController : Controller {
     /// <response code="404">Caso nenhum cinema seja encontrado com o ID informado</response>
     [HttpPatch("{id}")]
     public ActionResult UpdatePatchCinema(int id, [FromBody] JsonPatchDocument<UpdateCinemaDTO> patchCine) {
-        Cinema? cine = _FindCinemaById(id);
+        Cinema? cine = _FindCinemaById.Find(id);
         if (cine == null) return NotFound($"O filme com ID: {id}, não foi encontrado.");
 
         UpdateCinemaDTO cineForUpdate = _mapper.Map<UpdateCinemaDTO>(cine);
@@ -141,18 +144,13 @@ public class CinemaController : Controller {
     /// <response code="404">Caso nenhum cinema seja encontrado com o ID informado</response>
     [HttpDelete("{id}")]
     public ActionResult DeleteCinema(int id) {
-        Cinema? cine = _FindCinemaById(id);
+        Cinema? cine = _FindCinemaById.Find(id);
 
         if (cine == null) return NotFound($"O cinema com ID: {id}, não foi encontrado.");
 
         _dbContext.Cinemas.Remove(cine);
         _dbContext.SaveChanges();
         return NoContent();
-    }
-
-    private Cinema? _FindCinemaById(int id) {
-        Cinema? cinema = _dbContext.Cinemas.FirstOrDefault(cine => cine.Id == id);
-        return cinema;
     }
 
     private ValidationResult _Validation(ICinema cineForValidation) {
