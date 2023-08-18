@@ -6,7 +6,8 @@ public class FindById<TModel> where TModel: class{
     private readonly CineInfoContext _dbContext;
     private readonly Type[] _supportedTypes = {
         typeof(Movie),
-        typeof(Cinema)
+        typeof(Cinema),
+        typeof(Address),
     };
 
     public FindById(CineInfoContext dbContext) {
