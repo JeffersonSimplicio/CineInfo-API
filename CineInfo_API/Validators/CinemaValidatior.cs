@@ -10,6 +10,6 @@ public class CinemaValidator : AbstractValidator<ICinema> {
             .Length(3, 100).WithMessage("O nome deve ter entre 3 e 100 caracteres.");
 
         RuleFor(cine => cine.NumberHalls)
-            .InclusiveBetween(1, 50).WithMessage("Aquantidade de salas deve estar entre 1 e 50");
+            .InclusiveBetween(1, 50).WithMessage(" Aquantidade de salas deve estar entre 1 e 50.");
     }
 }
