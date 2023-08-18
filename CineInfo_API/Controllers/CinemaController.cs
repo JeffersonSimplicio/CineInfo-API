@@ -50,6 +50,17 @@ public class CinemaController : Controller {
     }
 
     /// <summary>
+    /// Retona todos os cinemas do banco de dados
+    /// </summary>
+    /// <returns>ActionResult{List{Cinema[]}}</returns>
+    /// <response code="200">Retorna a lista de cinemas com sucesso.</response>
+    [HttpGet("all")]
+    public ActionResult<List<Cinema[]>> GetAllCinemas() {
+        Cinema[] cinemas = _dbContext.Cinemas.ToArray<Cinema>();
+        return Ok(cinemas);
+    }
+
+    /// <summary>
     /// Obtém uma lista paginada de cinemas
     /// </summary>
     /// <param name="skip">Número de itens a serem ignorados (padrão: 0)</param>
