@@ -51,6 +51,17 @@ public class MovieController : ControllerBase {
     }
 
     /// <summary>
+    /// Retona todos os filmes do banco de dados
+    /// </summary>
+    /// <returns>ActionResult{List{Movie[]}}</returns>
+    /// <response code="200">Retorna a lista de filmes com sucesso.</response>
+    [HttpGet("all")]
+    public ActionResult<List<Movie[]>> GetAllMovies() {
+        Movie[] movies = _dbContext.Movies.ToArray<Movie>();
+        return Ok(movies); 
+    }
+
+    /// <summary>
     /// Retona filmes de forma paginada
     /// </summary>
     /// <param name="skip">Quantos filmes devem ser pulados</param>
