@@ -18,12 +18,14 @@ public class MovieController : ControllerBase {
     private IMapper _mapper;
     private FindById<Movie> _FindMovieById;
     private ListErrors _ListErrors;
+    private Validation<IMovie> _Validation;
 
     public MovieController(CineInfoContext dbContext, IMapper mapper) {
         _dbContext = dbContext;
         _mapper = mapper;
         _FindMovieById = new FindById<Movie>(_dbContext);
         _ListErrors = new ListErrors();
+        _Validation = new Validation<IMovie>(new MovieValidator());
     }
 
     /// <summary>
@@ -35,7 +37,7 @@ public class MovieController : ControllerBase {
     /// <response code="400">Caso alguma imformação não esta dentro das regras</response>
     [HttpPost]
     public ActionResult AddMovie([FromBody] CreateMovieDTO movieDTO) {
-        ValidationResult result = _Validation(movieDTO);
+        ValidationResult result = _Validation.Validate(movieDTO);
 
         if (result.IsValid) {
             Movie movie = _mapper.Map<Movie>(movieDTO);
@@ -96,7 +98,7 @@ public class MovieController : ControllerBase {
         Movie? movie = _FindMovieById.Find(id);
         if (movie == null) return NotFound($"O filme com ID: {id}, não foi encontrado.");
 
-        ValidationResult result = _Validation(movieDTO);
+        ValidationResult result = _Validation.Validate(movieDTO);
 
         if (result.IsValid) {
             _mapper.Map(movieDTO, movie);
@@ -125,7 +127,7 @@ public class MovieController : ControllerBase {
 
         patchMovie.ApplyTo(movieForUpdate);
 
-        ValidationResult result = _Validation(movieForUpdate);
+        ValidationResult result = _Validation.Validate(movieForUpdate);
 
         if (result.IsValid) {
             _mapper.Map(movieForUpdate, movie);
@@ -153,11 +155,5 @@ public class MovieController : ControllerBase {
         _dbContext.Movies.Remove(movie);
         _dbContext.SaveChanges();
         return NoContent();
-    }
-
-    private ValidationResult _Validation(IMovie movieForValidation) {
-        var validator = new MovieValidator();
-        ValidationResult result = validator.Validate(movieForValidation);
-        return result;
     }
 }

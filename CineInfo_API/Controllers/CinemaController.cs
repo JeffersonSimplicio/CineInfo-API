@@ -18,12 +18,14 @@ public class CinemaController : Controller {
     private IMapper _mapper;
     private FindById<Cinema> _FindCinemaById;
     private ListErrors _ListErrors;
+    private Validation<ICinema> _Validation;
 
     public CinemaController(CineInfoContext dbContext, IMapper mapper) {
         _dbContext = dbContext;
         _mapper = mapper;
         _FindCinemaById = new FindById<Cinema>(_dbContext);
         _ListErrors = new ListErrors();
+        _Validation = new Validation<ICinema>(new CinemaValidator());
     }
 
     /// <summary>
@@ -35,7 +37,7 @@ public class CinemaController : Controller {
     /// <response code="400">Caso ocorra um erro de validação nos campos</response>
     [HttpPost]
     public ActionResult AddCinema([FromBody] CreateCinemaDTO cinemaDTO) {
-        var result = _Validation(cinemaDTO);
+        var result = _Validation.Validate(cinemaDTO);
 
         if (result.IsValid) {
             Cinema cine = _mapper.Map<Cinema>(cinemaDTO);
@@ -96,7 +98,7 @@ public class CinemaController : Controller {
         if (cine == null)
             return NotFound($"O cinema com ID: {id}, não foi encontrado.");
 
-        ValidationResult result = _Validation(cineDTO);
+        ValidationResult result = _Validation.Validate(cineDTO);
 
         if (result.IsValid) {
             _mapper.Map(cineDTO, cine);
@@ -125,7 +127,7 @@ public class CinemaController : Controller {
 
         patchCine.ApplyTo(cineForUpdate);
 
-        ValidationResult result = _Validation(cineForUpdate);
+        ValidationResult result = _Validation.Validate(cineForUpdate);
 
         if (result.IsValid) {
             _mapper.Map(cineForUpdate, cine);
@@ -153,11 +155,5 @@ public class CinemaController : Controller {
         _dbContext.Cinemas.Remove(cine);
         _dbContext.SaveChanges();
         return NoContent();
-    }
-
-    private ValidationResult _Validation(ICinema cineForValidation) {
-        var validator = new CinemaValidator();
-        ValidationResult result = validator.Validate(cineForValidation);
-        return result;
     }
 }
