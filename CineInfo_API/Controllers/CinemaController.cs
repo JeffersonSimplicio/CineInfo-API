@@ -60,10 +60,10 @@ public class CinemaController : Controller {
     public ActionResult<List<ReadMovieDTO>> GetCinemaPagination([FromQuery] int skip = 0, int take = 50) {
         IQueryable<Cinema> cines = _dbContext.Cinemas.Skip(skip).Take(take);
 
-        List<ReadMovieDTO> readMovieDTOs = cines.AsEnumerable()
-            .Select(movie => _mapper.Map<ReadMovieDTO>(movie))
+        List<ReadCinemaDTO> readCinemaDTOs = cines.AsEnumerable()
+            .Select(cine => _mapper.Map<ReadCinemaDTO>(cine))
             .ToList();
-        return Ok(readMovieDTOs);
+        return Ok(readCinemaDTOs);
     }
 
     /// <summary>
