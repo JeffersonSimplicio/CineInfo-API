@@ -14,4 +14,8 @@ public class Cinema : ICinema {
     [Required]
     [Column("number_halls")]
     public int NumberHalls { get; set; }
+    [Required]
+    [Column("address_id")]
+    public int AddressId { get; set; }
+    public virtual Address Address { get; set; }
 }
