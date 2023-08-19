@@ -18,32 +18,6 @@ namespace CineInfo_API.Migrations
                 .HasAnnotation("ProductVersion", "7.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("CineInfo_API.Models.Address", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Neighborhood")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("neighborhood");
-
-                    b.Property<int>("Number")
-                        .HasColumnType("int")
-                        .HasColumnName("number");
-
-                    b.Property<string>("Street")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("street");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Addresses");
-                });
-
             modelBuilder.Entity("CineInfo_API.Models.Cinema", b =>
                 {
                     b.Property<int>("Id")
