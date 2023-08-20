@@ -50,17 +50,6 @@ public class AddressController : Controller {
     }
 
     /// <summary>
-    /// Retona todos os endereços do banco de dados
-    /// </summary>
-    /// <returns>ActionResult{List{Address[]}}</returns>
-    /// <response code="200">Retorna a lista de endereços com sucesso.</response>
-    [HttpGet("all")]
-    public ActionResult<List<Address[]>> GetAllCinemas() {
-        Address[] addresses = _dbContext.Addresses.ToArray<Address>();
-        return Ok(addresses);
-    }
-
-    /// <summary>
     /// Obtém uma lista paginada de endereços
     /// </summary>
     /// <param name="skip">Número de itens a serem ignorados (padrão: 0)</param>
