@@ -6,9 +6,8 @@ namespace CineInfo_API.Profiles;
 
 public class AddressProfile : Profile {
     public AddressProfile() {
-        CreateMap<CreateAddressDTO, Address>();
-        CreateMap<UpdateAddressDTO, Address>();
-        CreateMap<Address, UpdateAddressDTO>();
+        CreateMap<InputAddressDTO, Address>();
+        CreateMap<Address, InputAddressDTO>();
         CreateMap<Address, ReadAddressDTO>();
     }
 }

@@ -18,14 +18,14 @@ public class MovieController : ControllerBase {
     private IMapper _mapper;
     private FindById<Movie> _FindMovieById;
     private ListErrors _ListErrors;
-    private Validation<IMovie> _Validation;
+    private Validation<InputMovieDTO> _Validation;
 
     public MovieController(CineInfoContext dbContext, IMapper mapper) {
         _dbContext = dbContext;
         _mapper = mapper;
         _FindMovieById = new FindById<Movie>(_dbContext);
         _ListErrors = new ListErrors();
-        _Validation = new Validation<IMovie>(new MovieValidator());
+        _Validation = new Validation<InputMovieDTO>(new MovieValidator());
     }
 
     /// <summary>
@@ -36,7 +36,7 @@ public class MovieController : ControllerBase {
     /// <response code="201">Caso inserção seja feita com sucesso</response>
     /// <response code="400">Caso alguma imformação não esta dentro das regras</response>
     [HttpPost]
-    public ActionResult AddMovie([FromBody] CreateMovieDTO movieDTO) {
+    public ActionResult AddMovie([FromBody] InputMovieDTO movieDTO) {
         ValidationResult result = _Validation.Validate(movieDTO);
 
         if (result.IsValid) {
@@ -105,7 +105,7 @@ public class MovieController : ControllerBase {
     /// <response code="204">Caso a atualização seja bem sucedida</response>
     /// <response code="404">Caso nenhum filme seja encontrado com o ID informado</response>
     [HttpPut("{id}")]
-    public ActionResult UpdateMovie(int id, [FromBody] UpdateMovieDTO movieDTO) {
+    public ActionResult UpdateMovie(int id, [FromBody] InputMovieDTO movieDTO) {
         Movie? movie = _FindMovieById.Find(id);
         if (movie == null) return NotFound($"O filme com ID: {id}, não foi encontrado.");
 
@@ -130,11 +130,11 @@ public class MovieController : ControllerBase {
     /// <response code="400">Caso ocorra um erro de validação nas atualizações</response>
     /// <response code="404">Caso nenhum filme seja encontrado com o ID informado</response>
     [HttpPatch("{id}")]
-    public ActionResult UpdatePatchMovie(int id, [FromBody] JsonPatchDocument<UpdateMovieDTO> patchMovie) {
+    public ActionResult UpdatePatchMovie(int id, [FromBody] JsonPatchDocument<InputMovieDTO> patchMovie) {
         Movie? movie = _FindMovieById.Find(id);
         if (movie == null) return NotFound($"O filme com ID: {id}, não foi encontrado.");
 
-        UpdateMovieDTO movieForUpdate = _mapper.Map<UpdateMovieDTO>(movie);
+        InputMovieDTO movieForUpdate = _mapper.Map<InputMovieDTO>(movie);
 
         patchMovie.ApplyTo(movieForUpdate);
 

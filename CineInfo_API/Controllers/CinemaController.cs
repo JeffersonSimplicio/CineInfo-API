@@ -8,6 +8,7 @@ using CineInfo_API.Validators;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CineInfo_API.Controllers;
 
@@ -18,14 +19,14 @@ public class CinemaController : Controller {
     private IMapper _mapper;
     private FindById<Cinema> _FindCinemaById;
     private ListErrors _ListErrors;
-    private Validation<ICinema> _Validation;
+    private Validation<InputCinemaDTO> _Validation;
 
     public CinemaController(CineInfoContext dbContext, IMapper mapper) {
         _dbContext = dbContext;
         _mapper = mapper;
         _FindCinemaById = new FindById<Cinema>(_dbContext);
         _ListErrors = new ListErrors();
-        _Validation = new Validation<ICinema>(new CinemaValidator());
+        _Validation = new Validation<InputCinemaDTO>(new CinemaValidator());
     }
 
     /// <summary>
@@ -36,7 +37,7 @@ public class CinemaController : Controller {
     /// <response code="201">Caso a criação seja bem sucedida</response>
     /// <response code="400">Caso ocorra um erro de validação nos campos</response>
     [HttpPost]
-    public ActionResult AddCinema([FromBody] CreateCinemaDTO cinemaDTO) {
+    public ActionResult AddCinema([FromBody] InputCinemaDTO cinemaDTO) {
         var result = _Validation.Validate(cinemaDTO);
 
         if (result.IsValid) {
@@ -52,12 +53,16 @@ public class CinemaController : Controller {
     /// <summary>
     /// Retona todos os cinemas do banco de dados
     /// </summary>
-    /// <returns>ActionResult{List{Cinema[]}}</returns>
+    /// <returns>ActionResult{List{ReadCinemaDTO}}</returns>
     /// <response code="200">Retorna a lista de cinemas com sucesso.</response>
     [HttpGet("all")]
-    public ActionResult<List<Cinema[]>> GetAllCinemas() {
-        Cinema[] cinemas = _dbContext.Cinemas.ToArray<Cinema>();
-        return Ok(cinemas);
+    public ActionResult<List<ReadCinemaDTO>> GetAllCinemas() {
+        Cinema[] cines = _dbContext.Cinemas.ToArray<Cinema>();
+
+        List<ReadCinemaDTO> readCinemaDTOs = cines.AsEnumerable()
+            .Select(cine => _mapper.Map<ReadCinemaDTO>(cine))
+            .ToList();
+        return Ok(readCinemaDTOs);
     }
 
     /// <summary>
@@ -69,7 +74,7 @@ public class CinemaController : Controller {
     /// <response code="200">Caso a requisição seja bem sucedida</response>
     [HttpGet]
     public ActionResult<List<ReadMovieDTO>> GetCinemaPagination([FromQuery] int skip = 0, int take = 50) {
-        IQueryable<Cinema> cines = _dbContext.Cinemas.Skip(skip).Take(take);
+        Cinema[] cines = _dbContext.Cinemas.Skip(skip).Take(take).ToArray();
 
         List<ReadCinemaDTO> readCinemaDTOs = cines.AsEnumerable()
             .Select(cine => _mapper.Map<ReadCinemaDTO>(cine))
@@ -104,7 +109,7 @@ public class CinemaController : Controller {
     /// <response code="400">Caso ocorra um erro de validação nos campos</response>
     /// <response code="404">Caso nenhum cinema seja encontrado com o ID informado</response>
     [HttpPut("{id}")]
-    public ActionResult UpdateCinema(int id, [FromBody] UpdateCinemaDTO cineDTO) {
+    public ActionResult UpdateCinema(int id, [FromBody] InputCinemaDTO cineDTO) {
         Cinema? cine = _FindCinemaById.Find(id);
         if (cine == null)
             return NotFound($"O cinema com ID: {id}, não foi encontrado.");
@@ -130,11 +135,11 @@ public class CinemaController : Controller {
     /// <response code="400">Caso ocorra um erro de validação nas atualizações</response>
     /// <response code="404">Caso nenhum cinema seja encontrado com o ID informado</response>
     [HttpPatch("{id}")]
-    public ActionResult UpdatePatchCinema(int id, [FromBody] JsonPatchDocument<UpdateCinemaDTO> patchCine) {
+    public ActionResult UpdatePatchCinema(int id, [FromBody] JsonPatchDocument<InputCinemaDTO> patchCine) {
         Cinema? cine = _FindCinemaById.Find(id);
         if (cine == null) return NotFound($"O filme com ID: {id}, não foi encontrado.");
 
-        UpdateCinemaDTO cineForUpdate = _mapper.Map<UpdateCinemaDTO>(cine);
+        InputCinemaDTO cineForUpdate = _mapper.Map<InputCinemaDTO>(cine);
 
         patchCine.ApplyTo(cineForUpdate);
 

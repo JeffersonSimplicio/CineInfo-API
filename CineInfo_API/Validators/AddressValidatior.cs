@@ -1,8 +1,8 @@
-﻿using CineInfo_API.Interfaces;
+﻿using CineInfo_API.Data.DTOs;
 using FluentValidation;
 
 namespace CineInfo_API.Validators; 
-public class AddressValidatior : AbstractValidator<IAddress> {
+public class AddressValidatior : AbstractValidator<InputAddressDTO> {
     public AddressValidatior() {
         RuleFor(address => address.Neighborhood)
             .NotEmpty().WithMessage("O nome do bairro é obrigatorio.")

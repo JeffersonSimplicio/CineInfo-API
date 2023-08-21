@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using CineInfo_API.Interfaces;
+using CineInfo_API.Data.DTOs;
 
 namespace CineInfo_API.Validators;
 
-public class MovieValidator : AbstractValidator<IMovie> {
+public class MovieValidator : AbstractValidator<InputMovieDTO> {
     public MovieValidator() {
         RuleFor(movie => movie.Title)
             .NotEmpty().WithMessage("O título do filme é obrigatório.")

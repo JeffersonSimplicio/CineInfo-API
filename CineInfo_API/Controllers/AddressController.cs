@@ -18,14 +18,14 @@ public class AddressController : Controller {
     private IMapper _mapper;
     private FindById<Address> _FindAddressById;
     private ListErrors _ListErrors;
-    private Validation<IAddress> _Validation;
+    private Validation<InputAddressDTO> _Validation;
 
     public AddressController(CineInfoContext dbContext, IMapper mapper) {
         _dbContext = dbContext;
         _mapper = mapper;
         _FindAddressById = new FindById<Address>(_dbContext);
         _ListErrors = new ListErrors();
-        _Validation = new Validation<IAddress>(new AddressValidatior());
+        _Validation = new Validation<InputAddressDTO>(new AddressValidatior());
     }
 
     /// <summary>
@@ -36,7 +36,7 @@ public class AddressController : Controller {
     /// <response code="201">Caso a criação seja bem sucedida</response>
     /// <response code="400">Caso ocorra um erro de validação nos campos</response>
     [HttpPost]
-    public ActionResult AddAdress([FromBody] CreateAddressDTO adressDTO) {
+    public ActionResult AddAdress([FromBody] InputAddressDTO adressDTO) {
         var result = _Validation.Validate(adressDTO);
 
         if (result.IsValid) {
@@ -50,6 +50,20 @@ public class AddressController : Controller {
     }
 
     /// <summary>
+    /// Retona todos os endereços do banco de dados
+    /// </summary>
+    /// <returns>ActionResult{List{ReadAddressDTO}}</returns>
+    /// <response code="200">Retorna a lista de endereços com sucesso.</response>
+    [HttpGet("all")]
+    public ActionResult<List<ReadAddressDTO>> GetAllMovies() {
+        Address[] addresses = _dbContext.Addresses.ToArray();
+        List<ReadAddressDTO> readAddressDTOs = addresses.AsEnumerable()
+            .Select(movie => _mapper.Map<ReadAddressDTO>(movie))
+            .ToList();
+        return Ok(readAddressDTOs);
+    }
+
+    /// <summary>
     /// Obtém uma lista paginada de endereços
     /// </summary>
     /// <param name="skip">Número de itens a serem ignorados (padrão: 0)</param>
@@ -58,7 +72,7 @@ public class AddressController : Controller {
     /// <response code="200">Caso a requisição seja bem sucedida</response>
     [HttpGet]
     public ActionResult<List<ReadAddressDTO>> GetAddressPagination([FromQuery] int skip = 0, int take = 50) {
-        IQueryable<Address> addresses = _dbContext.Addresses.Skip(skip).Take(take);
+        Address[] addresses = _dbContext.Addresses.Skip(skip).Take(take).ToArray();
 
         List<ReadAddressDTO> readAddressDTOs = addresses.AsEnumerable()
             .Select(movie => _mapper.Map<ReadAddressDTO>(movie))
@@ -93,7 +107,7 @@ public class AddressController : Controller {
     /// <response code="400">Caso ocorra um erro de validação nos campos</response>
     /// <response code="404">Caso nenhum endereço seja encontrado com o ID informado</response>
     [HttpPut("{id}")]
-    public ActionResult UpdateAddress(int id, [FromBody] UpdateAddressDTO addressDTO) {
+    public ActionResult UpdateAddress(int id, [FromBody] InputAddressDTO addressDTO) {
         Address? address = _FindAddressById.Find(id);
         if (address == null)
             return NotFound($"O endereço com ID: {id}, não foi encontrado.");
@@ -119,11 +133,11 @@ public class AddressController : Controller {
     /// <response code="400">Caso ocorra um erro de validação nas atualizações</response>
     /// <response code="404">Caso nenhum cinema seja encontrado com o ID informado</response>
     [HttpPatch("{id}")]
-    public ActionResult UpdatePatchAddress(int id, [FromBody] JsonPatchDocument<UpdateAddressDTO> patchAddress) {
+    public ActionResult UpdatePatchAddress(int id, [FromBody] JsonPatchDocument<InputAddressDTO> patchAddress) {
         Address? address = _FindAddressById.Find(id);
         if (address == null) return NotFound($"O filme com ID: {id}, não foi encontrado.");
 
-        UpdateAddressDTO addressForUpdate = _mapper.Map<UpdateAddressDTO>(address);
+        InputAddressDTO addressForUpdate = _mapper.Map<InputAddressDTO>(address);
 
         patchAddress.ApplyTo(addressForUpdate);
 

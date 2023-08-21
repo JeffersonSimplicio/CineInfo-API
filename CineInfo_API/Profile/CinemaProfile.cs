@@ -6,9 +6,12 @@ namespace CineInfo_API.Profiles;
 
 public class CinemaProfile : Profile {
     public CinemaProfile() {
-        CreateMap<CreateCinemaDTO, Cinema>();
-        CreateMap<UpdateCinemaDTO, Cinema>();
-        CreateMap<Cinema, UpdateCinemaDTO>();
-        CreateMap<Cinema, ReadCinemaDTO>();
+        CreateMap<InputCinemaDTO, Cinema>();
+        CreateMap<Cinema, InputCinemaDTO>();
+        CreateMap<Cinema, ReadCinemaDTO>()
+            .ForMember(
+                cine => cine.Address,
+                opt => opt.MapFrom(cine => cine.Address)
+            );
     }
 }

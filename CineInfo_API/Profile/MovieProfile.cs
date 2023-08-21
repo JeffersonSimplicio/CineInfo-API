@@ -6,9 +6,8 @@ namespace CineInfo_API.Profiles;
 
 public class MovieProfile : Profile {
     public MovieProfile() {
-        CreateMap<CreateMovieDTO, Movie>();
-        CreateMap<UpdateMovieDTO, Movie>();
-        CreateMap<Movie, UpdateMovieDTO>();
+        CreateMap<InputMovieDTO, Movie>();
+        CreateMap<Movie, InputMovieDTO>();
         CreateMap<Movie, ReadMovieDTO>();
     }
 }

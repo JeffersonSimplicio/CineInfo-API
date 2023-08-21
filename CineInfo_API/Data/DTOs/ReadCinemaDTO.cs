@@ -5,6 +5,6 @@ public class ReadCinemaDTO : ICinema {
     public int Id { get; set; }
     public string Name { get; set; }
     public int NumberHalls { get; set; }
-    public ReadAddressDTO AddressDTO { get; set; }
+    public ReadAddressDTO Address { get; set; }
     public string SearchTimestamp { get; set; } = DateTime.Now.ToString("HH:mm:ss dd/MM/yyyy");
 }
