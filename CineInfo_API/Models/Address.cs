@@ -17,5 +17,5 @@ public class Address : IAddress {
     [Required]
     [Column("number")]
     public int Number { get; set; }
-    public virtual Cinema Cinema { get; set; }
+    public Cinema? Cinema { get; set; }
 }
