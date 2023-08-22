@@ -41,10 +41,14 @@ public class CinemaController : Controller {
         var result = _Validation.Validate(cinemaDTO);
 
         if (result.IsValid) {
-            Cinema cine = _mapper.Map<Cinema>(cinemaDTO);
-            _dbContext.Cinemas.Add(cine);
-            _dbContext.SaveChanges();
-            return CreatedAtAction(nameof(GetCinemaById), new { id = cine.Id }, cine);
+            Address? address = _dbContext.Addresses.Find(cinemaDTO.AddressId);
+            if (address != null) {
+                Cinema cine = _mapper.Map<Cinema>(cinemaDTO);
+                _dbContext.Cinemas.Add(cine);
+                _dbContext.SaveChanges();
+                return CreatedAtAction(nameof(GetCinemaById), new { id = cine.Id }, cine);
+            }
+            return NotFound("Endereço não encontrado");
         }
         List<string> errors = _ListErrors.Generate(result);
         return BadRequest(errors);
