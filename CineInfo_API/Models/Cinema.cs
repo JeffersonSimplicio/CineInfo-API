@@ -17,5 +17,5 @@ public class Cinema : ICinema {
     [Required]
     [Column("address_id")]
     public int AddressId { get; set; }
-    public Address Address { get; set; }
+    public virtual Address Address { get; set; }
 }
