@@ -37,13 +37,18 @@ public class AddressController : Controller {
     /// <response code="400">Caso ocorra um erro de validação nos campos</response>
     [HttpPost]
     public ActionResult AddAdress([FromBody] InputAddressDTO adressDTO) {
-        var result = _Validation.Validate(adressDTO);
+        ValidationResult result = _Validation.Validate(adressDTO);
 
         if (result.IsValid) {
             Address address = _mapper.Map<Address>(adressDTO);
             _dbContext.Addresses.Add(address);
             _dbContext.SaveChanges();
-            return CreatedAtAction(nameof(GetCinemaById), new { id = address.Id }, address);
+            ReadAddressDTO returnAddress = _mapper.Map<ReadAddressDTO>(address);
+            return CreatedAtAction(
+                nameof(GetAddressById),
+                new { id = returnAddress.Id },
+                returnAddress
+            );
         }
         List<string> errors = _ListErrors.Generate(result);
         return BadRequest(errors);
@@ -88,7 +93,7 @@ public class AddressController : Controller {
     /// <response code="200">Caso a requisição seja bem sucedida</response>
     /// <response code="404">Caso nenhum endereço seja encontrado com o ID informado</response>
     [HttpGet("{id}")]
-    public ActionResult GetCinemaById(int id) {
+    public ActionResult GetAddressById(int id) {
         Address? address = _FindAddressById.Find(id);
         if (address == null) {
             return NotFound($"O cinema com ID: {id}, não foi encontrado.");

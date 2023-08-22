@@ -1,4 +1,4 @@
-﻿ using AutoMapper;
+﻿using AutoMapper;
 using CineInfo_API.Data;
 using CineInfo_API.Data.DTOs;
 using CineInfo_API.Interfaces;
@@ -38,7 +38,7 @@ public class CinemaController : Controller {
     /// <response code="400">Caso ocorra um erro de validação nos campos</response>
     [HttpPost]
     public ActionResult AddCinema([FromBody] InputCinemaDTO cinemaDTO) {
-        var result = _Validation.Validate(cinemaDTO);
+        ValidationResult result = _Validation.Validate(cinemaDTO);
 
         if (result.IsValid) {
             Address? address = _dbContext.Addresses.Find(cinemaDTO.AddressId);
@@ -46,7 +46,12 @@ public class CinemaController : Controller {
                 Cinema cine = _mapper.Map<Cinema>(cinemaDTO);
                 _dbContext.Cinemas.Add(cine);
                 _dbContext.SaveChanges();
-                return CreatedAtAction(nameof(GetCinemaById), new { id = cine.Id }, cine);
+                ReadCinemaDTO returnCinema = _mapper.Map<ReadCinemaDTO>(cine);
+                return CreatedAtAction(
+                    nameof(GetCinemaById),
+                    new { id = returnCinema.Id },
+                    returnCinema
+                );
             }
             return NotFound("Endereço não encontrado");
         }

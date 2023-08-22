@@ -43,7 +43,12 @@ public class MovieController : ControllerBase {
             Movie movie = _mapper.Map<Movie>(movieDTO);
             _dbContext.Movies.Add(movie);
             _dbContext.SaveChanges();
-            return CreatedAtAction(nameof(GetMovieById), new { id = movie.Id }, movie);
+            ReadMovieDTO returnMovie = _mapper.Map<ReadMovieDTO>(movie);
+            return CreatedAtAction(
+                nameof(GetMovieById),
+                new { id = returnMovie.Id },
+                returnMovie
+            );
         }
 
         List<string> errors = _ListErrors.Generate(result);
