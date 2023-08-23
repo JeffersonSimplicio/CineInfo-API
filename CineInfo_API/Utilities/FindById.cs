@@ -8,6 +8,7 @@ public class FindById<TModel> where TModel: class{
         typeof(Movie),
         typeof(Cinema),
         typeof(Address),
+        typeof(Session),
     };
 
     public FindById(CineInfoContext dbContext) {

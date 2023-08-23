@@ -25,7 +25,7 @@ public class AddressController : Controller {
         _mapper = mapper;
         _FindAddressById = new FindById<Address>(_dbContext);
         _ListErrors = new ListErrors();
-        _Validation = new Validation<InputAddressDTO>(new AddressValidatior());
+        _Validation = new Validation<InputAddressDTO>(new AddressValidator());
     }
 
     /// <summary>

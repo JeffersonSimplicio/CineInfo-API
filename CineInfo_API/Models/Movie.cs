@@ -18,4 +18,5 @@ public class Movie : IMovie {
     [Required]
     [Column("duration")]
     public int Duration { get; set; }
+    public virtual ICollection<Session> Sessions { get; set; }
 }
