@@ -35,6 +35,7 @@ public class CinemaController : Controller {
     /// <returns>ActionResult</returns>
     /// <response code="201">Caso a criação seja bem sucedida</response>
     /// <response code="400">Caso ocorra um erro de validação nos campos</response>
+    /// <response code="404">Caso o endereço não seja encontrado.</response>
     [HttpPost]
     public ActionResult AddCinema([FromBody] InputCinemaDTO cinemaDTO) {
         ValidationResult result = _Validation.Validate(cinemaDTO);
