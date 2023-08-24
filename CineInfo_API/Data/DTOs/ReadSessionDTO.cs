@@ -2,6 +2,7 @@
 
 namespace CineInfo_API.Data.DTOs; 
 public class ReadSessionDTO : ISession {
+    public int Id { get; set; }
     public int MovieId { get; set; }
     public int CinemaId { get; set; }
     public DateTime StartTime { get; set; }

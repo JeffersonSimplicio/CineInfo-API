@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CineInfo_API.Data;
 using CineInfo_API.Data.DTOs;
-using CineInfo_API.Interfaces;
 using CineInfo_API.Models;
 using CineInfo_API.Utilities;
 using CineInfo_API.Validators;
