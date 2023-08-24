@@ -38,7 +38,8 @@ public class SessionController : ControllerBase {
                 return NotFound("Filme não encontrado");
 
             Session session = _mapper.Map<Session>(sessionDTO);
-            //Adiciona ao banco de dados
+            _dbContext.Sessions.Add(session);
+            _dbContext.SaveChanges();
 
             ReadSessionDTO returnSession = _mapper.Map<ReadSessionDTO>(session);
             //return CreatedAtAction(
