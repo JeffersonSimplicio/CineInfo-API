@@ -26,6 +26,14 @@ public class SessionController : ControllerBase {
         _Validation = new Validation<InputSessionDTO>(new SessionValidator());
     }
 
+    /// <summary>
+    /// Adiciona uma nova sessão
+    /// </summary>
+    /// <param name="sessionDTO">Objeto com os campos necessários para criação de uma sessão</param>
+    /// <returns>ActionResult</returns>
+    /// <response code="201">Caso a criação seja bem sucedida</response>
+    /// <response code="400">Caso ocorra um erro de validação nos campos</response>
+    /// <response code="404">Caso o cinema ou filme não seja encontrado.</response>
     [HttpPost]
     public ActionResult AddSession([FromBody] InputSessionDTO sessionDTO) {
         ValidationResult result = _Validation.Validate(sessionDTO);
