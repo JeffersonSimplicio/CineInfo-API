@@ -57,12 +57,16 @@ public class MovieController : ControllerBase {
     /// <summary>
     /// Retona todos os filmes do banco de dados
     /// </summary>
-    /// <returns>ActionResult{List{Movie[]}}</returns>
+    /// <returns>ActionResult{List{Movie}}</returns>
     /// <response code="200">Retorna a lista de filmes com sucesso.</response>
     [HttpGet("all")]
-    public ActionResult<List<Movie[]>> GetAllMovies() {
-        Movie[] movies = _dbContext.Movies.ToArray<Movie>();
-        return Ok(movies); 
+    public ActionResult<List<Movie>> GetAllMovies() {
+        Movie[] movies = _dbContext.Movies.ToArray();
+
+        List<ReadMovieDTO> readMovieDTOs = movies.AsEnumerable()
+            .Select(movie => _mapper.Map<ReadMovieDTO>(movie))
+            .ToList();
+        return Ok(readMovieDTOs);
     }
 
     /// <summary>
