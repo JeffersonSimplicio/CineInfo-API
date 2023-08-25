@@ -34,7 +34,7 @@ public class SessionController : ControllerBase {
     /// <returns>ActionResult</returns>
     /// <response code="201">Caso a criação seja bem sucedida</response>
     /// <response code="400">Caso ocorra um erro de validação nos campos</response>
-    /// <response code="404">Caso o cinema ou filme não seja encontrado.</response>
+    /// <response code="404">Caso o cinema ou filme não seja encontrado</response>
     [HttpPost]
     public ActionResult AddSession([FromBody] InputSessionDTO sessionDTO) {
         ValidationResult result = _Validation.Validate(sessionDTO);
@@ -107,7 +107,7 @@ public class SessionController : ControllerBase {
     public ActionResult GetSessionById(int id) {
         Session? session = _FindSessionById.Find(id);
         if (session == null) {
-            return NotFound($"A sessão com ID: {id}, não foi encontrado.");
+            return NotFound($"A sessão com ID: {id}, não foi encontrada.");
         }
         ReadSessionDTO sessionDTO = _mapper.Map<ReadSessionDTO>(session);
         return Ok(sessionDTO);
@@ -126,7 +126,7 @@ public class SessionController : ControllerBase {
     public ActionResult UpdateSession(int id, [FromBody] InputSessionDTO sessionDTO) {
         Session? session = _FindSessionById.Find(id);
         if (session == null)
-            return NotFound($"A sessão com ID: {id}, não foi encontrado.");
+            return NotFound($"A sessão com ID: {id}, não foi encontrada.");
 
         ValidationResult result = _Validation.Validate(sessionDTO);
 
@@ -163,7 +163,7 @@ public class SessionController : ControllerBase {
     ) {
         Session? session = _FindSessionById.Find(id);
         if (session == null)
-            return NotFound($"A sessão com ID: {id}, não foi encontrado.");
+            return NotFound($"A sessão com ID: {id}, não foi encontrada.");
 
         InputSessionDTO sessionForUpdate = _mapper.Map<InputSessionDTO>(session);
 
