@@ -66,11 +66,31 @@ public class SessionController : ControllerBase {
     /// </summary>
     /// <returns>ActionResult{List{ReadSessionDTO}}</returns>
     /// <response code="200">Retorna a lista de sessões com sucesso.</response>
+    [HttpGet("all")]
     public ActionResult<List<ReadSessionDTO>> GetAllSessions() {
         Session[] sessions = _dbContext.Sessions.ToArray<Session>();
 
         List<ReadSessionDTO> readSessionDTOs = sessions.AsEnumerable()
             .Select(cine => _mapper.Map<ReadSessionDTO>(cine))
+            .ToList();
+        return Ok(readSessionDTOs);
+    }
+
+    /// <summary>
+    /// Obtém uma lista paginada de sessões
+    /// </summary>
+    /// <param name="skip">Número de itens a serem ignorados (padrão: 0)</param>
+    /// <param name="take">Número máximo de itens a serem retornados (padrão: 50)</param>
+    /// <returns>ActionResult{List{ReadSessionDTO}}</returns>
+    /// <response code="200">Caso a requisição seja bem sucedida</response>
+    [HttpGet]
+    public ActionResult<List<ReadSessionDTO>> GetSessionPagination(
+        [FromQuery] int skip = 0, int take = 50
+    ) {
+        Session[] sessions = _dbContext.Sessions.Skip(skip).Take(take).ToArray();
+
+        List<ReadSessionDTO> readSessionDTOs = sessions.AsEnumerable()
+            .Select(session => _mapper.Map<ReadSessionDTO>(session))
             .ToList();
         return Ok(readSessionDTOs);
     }
