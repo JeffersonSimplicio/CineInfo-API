@@ -188,4 +188,23 @@ public class SessionController : ControllerBase {
         List<string> errors = _ListErrors.Generate(result);
         return BadRequest(errors);
     }
+
+    /// <summary>
+    /// Exclui uma sessão pelo ID
+    /// </summary>
+    /// <param name="id">Identificador(ID) da sessão que deseja excluir</param>
+    /// <returns>ActionResult</returns>
+    /// <response code="204">Caso a exclusão seja bem sucedida</response>
+    /// <response code="404">Caso nenhuma sessão seja encontrada com o ID informado</response>
+    [HttpDelete("{id}")]
+    public ActionResult DeleteSession(int id) {
+        Session? session = _FindSessionById.Find(id);
+
+        if (session == null)
+            return NotFound($"A sessão com ID: {id}, não foi encontrada.");
+
+        _dbContext.Sessions.Remove(session);
+        _dbContext.SaveChanges();
+        return NoContent();
+    }
 }
