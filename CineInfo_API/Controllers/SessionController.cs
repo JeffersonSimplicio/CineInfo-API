@@ -60,4 +60,18 @@ public class SessionController : ControllerBase {
         List<string> errors = _ListErrors.Generate(result);
         return BadRequest(errors);
     }
+
+    /// <summary>
+    /// Retona todos as sessões do banco de dados
+    /// </summary>
+    /// <returns>ActionResult{List{ReadSessionDTO}}</returns>
+    /// <response code="200">Retorna a lista de sessões com sucesso.</response>
+    public ActionResult<List<ReadSessionDTO>> GetAllSessions() {
+        Session[] sessions = _dbContext.Sessions.ToArray<Session>();
+
+        List<ReadSessionDTO> readSessionDTOs = sessions.AsEnumerable()
+            .Select(cine => _mapper.Map<ReadSessionDTO>(cine))
+            .ToList();
+        return Ok(readSessionDTOs);
+    }
 }
