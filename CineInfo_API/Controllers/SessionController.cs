@@ -6,6 +6,7 @@ using CineInfo_API.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using CineInfo_API.Validators;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace CineInfo_API.Controllers;
 
@@ -142,6 +143,48 @@ public class SessionController : ControllerBase {
             _dbContext.SaveChanges();
             return NoContent();
         }
+        List<string> errors = _ListErrors.Generate(result);
+        return BadRequest(errors);
+    }
+
+    /// <summary>
+    /// Atualiza parcialmente uma sessão pelo ID
+    /// </summary>
+    /// <param name="id">Identificador(ID) da sessão que deseja atualizar parcialmente</param>
+    /// <param name="patchSession">JsonPatchDocument contendo as atualizações a serem aplicadas</param>
+    /// <returns>ActionResult</returns>
+    /// <response code="204">Caso a atualização parcial seja bem sucedida</response>
+    /// <response code="400">Caso ocorra um erro de validação nas atualizações</response>
+    /// <response code="404">Caso algum dos ID informados não seja encontrado</response>
+    [HttpPatch("{id}")]
+    public ActionResult UpdatePatchSession(
+        int id,
+        [FromBody] JsonPatchDocument<InputSessionDTO> patchSession
+    ) {
+        Session? session = _FindSessionById.Find(id);
+        if (session == null)
+            return NotFound($"A sessão com ID: {id}, não foi encontrado.");
+
+        InputSessionDTO sessionForUpdate = _mapper.Map<InputSessionDTO>(session);
+
+        patchSession.ApplyTo(sessionForUpdate);
+
+        ValidationResult result = _Validation.Validate(sessionForUpdate);
+
+        if (result.IsValid) {
+            Movie? movie = _dbContext.Movies.Find(sessionForUpdate.MovieId);
+            if (movie == null)
+                return NotFound($"O filme com ID: {sessionForUpdate.MovieId}, não encontrado");
+
+            Cinema? Cine = _dbContext.Cinemas.Find(sessionForUpdate.CinemaId);
+            if (Cine == null)
+                return NotFound($"O cinema com ID: {sessionForUpdate.CinemaId}, não encontrado");
+
+            _mapper.Map(sessionForUpdate, session);
+            _dbContext.SaveChanges();
+            return NoContent();
+        }
+
         List<string> errors = _ListErrors.Generate(result);
         return BadRequest(errors);
     }
