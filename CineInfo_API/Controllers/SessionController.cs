@@ -50,12 +50,11 @@ public class SessionController : ControllerBase {
             _dbContext.SaveChanges();
 
             ReadSessionDTO returnSession = _mapper.Map<ReadSessionDTO>(session);
-            //return CreatedAtAction(
-            //    nameof(GetCinemaById),
-            //    new { id = returnCinema.Id },
-            //    returnCinema
-            //);
-            return Created($"localhost/session/{returnSession.Id}", returnSession);
+            return CreatedAtAction(
+                nameof(GetSessionById),
+                new { id = returnSession.Id },
+                returnSession
+            );
         }
         List<string> errors = _ListErrors.Generate(result);
         return BadRequest(errors);
@@ -93,5 +92,22 @@ public class SessionController : ControllerBase {
             .Select(session => _mapper.Map<ReadSessionDTO>(session))
             .ToList();
         return Ok(readSessionDTOs);
+    }
+
+    /// <summary>
+    /// Obtém uma sessão pelo ID
+    /// </summary>
+    /// <param name="id">Identificador(ID) da sessão que deseja obter</param>
+    /// <returns>ActionResult</returns>
+    /// <response code="200">Caso a requisição seja bem sucedida</response>
+    /// <response code="404">Caso nenhuma sessão seja encontrado com o ID informado</response>
+    [HttpGet("{id}")]
+    public ActionResult GetSessionById(int id) {
+        Session? session = _FindSessionById.Find(id);
+        if (session == null) {
+            return NotFound($"A sessão com ID: {id}, não foi encontrado.");
+        }
+        ReadSessionDTO sessionDTO = _mapper.Map<ReadSessionDTO>(session);
+        return Ok(sessionDTO);
     }
 }
