@@ -40,10 +40,11 @@ public class SessionController : ControllerBase {
         if (result.IsValid) {
             Movie? movie = _dbContext.Movies.Find(sessionDTO.MovieId);
             if (movie == null)
-                return NotFound("Filme não encontrado");
+                return NotFound($"O filme com ID: {sessionDTO.MovieId}, não encontrado");
+
             Cinema? Cine = _dbContext.Cinemas.Find(sessionDTO.CinemaId);
             if (Cine == null)
-                return NotFound("Filme não encontrado");
+                return NotFound($"O cinema com ID: {sessionDTO.CinemaId}, não encontrado");
 
             Session session = _mapper.Map<Session>(sessionDTO);
             _dbContext.Sessions.Add(session);
@@ -109,5 +110,39 @@ public class SessionController : ControllerBase {
         }
         ReadSessionDTO sessionDTO = _mapper.Map<ReadSessionDTO>(session);
         return Ok(sessionDTO);
+    }
+
+    /// <summary>
+    /// Atualiza uma sessão pelo ID
+    /// </summary>
+    /// <param name="id">Identificador(ID) da sessão que deseja atualizar</param>
+    /// <param name="sessionDTO">Objeto com os campos a serem atualizados da sessão</param>
+    /// <returns>ActionResult</returns>
+    /// <response code="204">Caso a atualização seja bem sucedida</response>
+    /// <response code="400">Caso ocorra um erro de validação nos campos</response>
+    /// <response code="404">Caso algum dos ID informados não seja encontrado</response>
+    [HttpPut("{id}")]
+    public ActionResult UpdateSession(int id, [FromBody] InputSessionDTO sessionDTO) {
+        Session? session = _FindSessionById.Find(id);
+        if (session == null)
+            return NotFound($"A sessão com ID: {id}, não foi encontrado.");
+
+        ValidationResult result = _Validation.Validate(sessionDTO);
+
+        if (result.IsValid) {
+            Movie? movie = _dbContext.Movies.Find(sessionDTO.MovieId);
+            if (movie == null)
+                return NotFound($"O filme com ID: {sessionDTO.MovieId}, não encontrado");
+
+            Cinema? Cine = _dbContext.Cinemas.Find(sessionDTO.CinemaId);
+            if (Cine == null)
+                return NotFound($"O cinema com ID: {sessionDTO.CinemaId}, não encontrado");
+
+            _mapper.Map(sessionDTO, session);
+            _dbContext.SaveChanges();
+            return NoContent();
+        }
+        List<string> errors = _ListErrors.Generate(result);
+        return BadRequest(errors);
     }
 }
